@@ -1,14 +1,13 @@
 #AGGRESSION
-
-BinCoordAssignMove <- read_excel("/Volumes/ChismHardDrive_1/Aggression Video Project/Datasets/Chism Datasets/Reference_Coords/AggnStudyRefCoords_Master.xlsx", 
+BinCoordAssignMove <- read_excel("/Volumes/ChismHardDriveMAC_1/ChismDatasets/Reference_Coords/AggnStudyRefCoords_Master.xlsx", 
                                  sheet = "AllBins")
 CoordBinnedMoveAggn<-function(data_table){
   BinCoordAssignMoveTube<-BinCoordAssignMove%>%
-    filter(Colony=="20"& Nest=="Tube"&Trial=="Aggn")
+    filter(Colony=="5"& Nest=="Tube"&Trial=="Aggn")
   BinCoordAssignMoveCircle<-BinCoordAssignMove%>%
-    filter(Colony=="20"& Nest=="Circle"&Trial=="Aggn") 
-  Colony20BinnedMoveTubeAggn <<-data_table%>%
-    filter(Colony=="20"& Nest=="Tube")%>%
+    filter(Colony=="5"& Nest=="Circle"&Trial=="Aggn") 
+  Colony5BinnedMoveTubeAggn <<-data_table%>%
+    filter(Colony=="5"& Nest=="Tube")%>%
     mutate(Bin =
              if_else(X >= BinCoordAssignMoveTube$X[2] & 
                        X <= BinCoordAssignMoveTube$X[1] &
@@ -41,8 +40,8 @@ CoordBinnedMoveAggn<-function(data_table){
                                                                                Y >= BinCoordAssignMoveTube$Y[9], 8,0
                                                                      )))))))))%>%
     select(c("Colony", "Nest", "Trial", "Seconds","AntLength.sec","Bin"))
-   Colony20BinnedMoveCircleAggn <-data_table%>%
-    filter(Colony=="20"& Nest=="Circle")%>%
+   Colony5BinnedMoveCircleAggn <-data_table%>%
+    filter(Colony=="5"& Nest=="Circle")%>%
     mutate(Bin =
              if_else(Y <= BinCoordAssignMoveCircle$Y[1],1,
                      if_else(Y >= BinCoordAssignMoveCircle$Y[1] & 
@@ -60,15 +59,15 @@ CoordBinnedMoveAggn<-function(data_table){
                                                                      if_else(Y >= BinCoordAssignMoveCircle$Y[7],8,0
                                                                      )))))))))%>%
      select(c("Colony", "Nest", "Trial", "Seconds","AntLength.sec","Bin"))
-  Colony20AggnBinned<<-full_join(Colony20BinnedMoveTubeAggn,Colony20BinnedMoveCircleAggn)
+  Colony5AggnBinned<<-full_join(Colony5BinnedMoveTubeAggn,Colony5BinnedMoveCircleAggn)
 }
 
-CoordBinnedMoveAggn(Colony20Aggn)
+CoordBinnedMoveAggn(Colony5Aggn)
 
 Colony5AggnBinned<-Colony5AggnBinned%>%
   select(-c(X,Y))
-
-  filter(Bin=="0")%>%
+Colony5AggnBinned%>%
+  filter(Bin=="0")
   group_by(Bin)%>%
   summarise(n=n())
 
@@ -99,11 +98,11 @@ Colony9AggnBinned<-Colony9AggnBinned%>%
   filter(Bin=="0")%>%
   group_by(Bin)%>%
   summarise(n=n())
-
+  
+left_join(Colony11AggnBinned,Colony11TubeAggn)
+  
 Colony11AggnBinned<-Colony11AggnBinned%>%
-  select(-c(X,Y))
-
-  filter(Bin=="0")%>%
+  filter(Bin=="0")
   group_by(Bin)%>%
   summarise(n=n())
 
@@ -139,11 +138,11 @@ Colony20AggnBinned<-Colony20AggnBinned%>%
 #Baseline
 CoordBinnedMovePre<-function(data_table){
   BinCoordAssignMoveTube<-BinCoordAssignMove%>%
-    filter(Colony=="9"& Nest=="Tube"&Trial=="Pre")
+    filter(Colony=="6"& Nest=="Tube" & Trial=="Pre")
   BinCoordAssignMoveCircle<-BinCoordAssignMove%>%
-    filter(Colony=="9"& Nest=="Circle"&Trial=="Pre") 
-  Colony9BinnedMoveTubePre <-data_table%>%
-    filter(Colony=="9"& Nest=="Tube")%>%
+    filter(Colony=="6"& Nest=="Circle" & Trial=="Pre") 
+  Colony6BinnedMoveTubePre <-data_table%>%
+    filter(Colony=="6"& Nest=="Tube")%>%
     mutate(Bin =
              if_else(X >= BinCoordAssignMoveTube$X[2] & 
                        X <= BinCoordAssignMoveTube$X[1] &
@@ -174,11 +173,9 @@ CoordBinnedMovePre<-function(data_table){
                                                                      if_else(X >= BinCoordAssignMoveTube$X[9] & 
                                                                                X <= BinCoordAssignMoveTube$X[8] &
                                                                                Y >= BinCoordAssignMoveTube$Y[9], 8,0
-                                                                     )))))))))%>%
-    select(c("Colony", "Nest", "Trial", "Seconds","AntLength.sec","Bin"))
-  
-  Colony9BinnedMoveCirclePre <-data_table%>%
-    filter(Colony=="9"& Nest=="Circle")%>%
+                                                                     )))))))))
+  Colony6BinnedMoveCirclePre <-data_table%>%
+    filter(Colony=="6"& Nest=="Circle")%>%
     mutate(Bin =
              if_else(Y <= BinCoordAssignMoveCircle$Y[1],1,
                      if_else(Y >= BinCoordAssignMoveCircle$Y[1] & 
@@ -194,27 +191,26 @@ CoordBinnedMovePre<-function(data_table){
                                                              if_else(Y >= BinCoordAssignMoveCircle$Y[6] & 
                                                                        Y <= BinCoordAssignMoveCircle$Y[7],7,
                                                                      if_else(Y >= BinCoordAssignMoveCircle$Y[7],8,0
-                                                                     )))))))))%>%
-    select(c("Colony", "Nest", "Trial", "Seconds","AntLength.sec","Bin"))
+                                                                     )))))))))
   
-  Colony9PreBinned<<-full_join(Colony9BinnedMoveTubePre,Colony9BinnedMoveCirclePre)
+  Colony6PreBinned<<-full_join(Colony6BinnedMoveTubePre,Colony6BinnedMoveCirclePre)
 }
 
-CoordBinnedMovePre(Colony9Pre)
+CoordBinnedMovePre(Colony6Pre)
 
 Colony5PreBinned<-Colony5PreBinned%>%
-  select(-c(X,Y))
-  filter(Bin=="0")%>%
+  filter(Bin=="0")
   group_by(Bin)%>%
   summarise(n=n())
-
-Colony6PreBinned<-Colony6PreBinned%>%
-  select(-c(X,Y))
-
-  filter(Bin=="0")%>%
+  Colony6PreBinned
+  Colony6PreBinned
+  
+write.csv(Colony6PreBinned,"Colony6PreBinnedZero.csv",row.names = FALSE)
+Colony6PreBinnedCheck<-Colony6PreBinned%>%
+  filter(Bin=="0")
   group_by(Bin)%>%
   summarise(n=n())
-
+  Colony6PreBinnedCheck
 Colony7PreBinned<-Colony7PreBinned%>%
   select(-c(X,Y))
 
@@ -278,6 +274,7 @@ AggnAssayDensity<-Colony5AggnBinned%>%
   full_join(Colony8AggnBinned)%>%
   full_join(Colony9AggnBinned)%>%
   full_join(Colony13AggnBinned)%>%
+  filter(Bin != 0) %>%
   group_by(Colony,Nest,Seconds)%>%
   mutate(Count=n())%>%
   group_by(Colony,Nest,Seconds,Bin)%>%
@@ -290,7 +287,7 @@ AggnAssayDensityNull<-AggnAssayDensity%>%
   select(Colony,Nest,Trial,Seconds)%>%
   distinct()
 
-AggnAssayDensityBinsNull<-full_join(AggnAssayDensityNull,BinsNullFull)
+AggnAssayDensityBinsNull<-left_join(AggnAssayDensityNull,BinsNullFullMove)
 
 AggnAssayDensityFull<-full_join(AggnAssayDensityBinsNull,AggnAssayDensity)%>%
   group_by(Colony,Nest,Seconds)%>%
@@ -316,7 +313,7 @@ AggnAssayDensityNull1<-AggnAssayDensity1%>%
   select(Colony,Nest,Trial,Seconds)%>%
   distinct()
 
-AggnAssayDensityBinsNull1<-full_join(AggnAssayDensityNull1,BinsNullFull)
+AggnAssayDensityBinsNull1<-full_join(AggnAssayDensityNull1,BinsNullFullMove)
 
 AggnAssayDensityFull1<-full_join(AggnAssayDensityBinsNull1,AggnAssayDensity1)%>%
   group_by(Colony,Nest,Seconds)%>%
@@ -325,7 +322,7 @@ AggnAssayDensityFull1<-full_join(AggnAssayDensityBinsNull1,AggnAssayDensity1)%>%
   select(c(Colony,Nest,Trial,Seconds,Bin,PropWorkers,AvgSpeed))%>%
   distinct()%>%
   drop_na()
-
+PreAssayDensity
 PreAssayDensity<-Colony5PreBinned%>%
   full_join(Colony6PreBinned)%>%
   full_join(Colony7PreBinned)%>%
@@ -353,6 +350,9 @@ PreAssayDensityFull<-full_join(PreAssayDensityBinsNull,PreAssayDensity)%>%
   select(c(Colony,Nest,Trial,Seconds,Bin,PropWorkers,AvgSpeed))%>%
   distinct()%>%
   drop_na()
+
+#TAGS need to be the difference in the avg speeds, not IQR  
+#Also SFZ & Occur zones v. avg movement speeds
 
 PreAssayDensity1<-Colony11PreBinned%>%
   full_join(Colony17PreBinned)%>%
@@ -385,38 +385,24 @@ FullAssayDensity<-AggnAssayDensity%>%
   full_join(PreAssayDensity)%>%
   full_join(PreAssayDensity1)
 
+FullAssayDensity %>% 
+  filter(Trial == "Pre") %>%
+  mutate(MeanProp = mean(PropWorkers)) %>%
+  ungroup() %>%
+  select(c(MeanProp)) %>%
+  distinct()
+  mutate(Count = n()) %>%
+  ungroup() %>%
+  mutate(AvgCount = mean(Count), StdDev = sd(Count)) %>%
+  select(c(AvgCount), StdDev) %>%
+  distinct()
+
+
+
 summary(lmer(AvgSpeed~PropWorkers*Nest*Trial+(Bin^2)*Bin+Seconds+(1|Colony),FullAssayDensity))
 summary(lmer(AvgSpeed~PropWorkers*Nest + (Bin^2)*Bin+Seconds+(1|Colony),FullAssayDensity%>%filter(Trial=="Aggn")))
 summary(lmer(AvgSpeed~PropWorkers*Nest + (Bin^2)*Bin+Seconds+(1|Colony),FullAssayDensity%>%filter(Trial=="Pre")))
 r.squaredGLMM(lmer(AvgSpeed~PropWorkers*Nest*Trial+(Bin^2)*Bin+Seconds+(1|Colony),FullAssayDensity))
-Aggn.Density
-
-CircleAggn.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Aggn")%>%drop_na(),aes(x=PropWorkers,y=AvgSpeed,
-                                                                     linetype=fct_rev(Nest),
-                                                                     color=fct_rev(Nest),
-                                                                     shape = fct_rev(Nest))) +
-  ggtitle("Aggn assay")+
-  geom_point(key_glyph = large_points,size=2,alpha=0.33) +
-  geom_smooth(method='lm',se=FALSE,size=1.25,color="black")+
-  theme_pubclean()+
-  theme(axis.line.x = element_line(color="black", size = 0.3), 
-        axis.ticks = element_blank(),
-        axis.text.y = element_text(size= 11,color="white"),
-        axis.text.x = element_text(size = 11, color = "black"),
-        axis.title = element_blank(),
-        legend.justification = c(1, 1),
-        legend.text=element_text(size = 14),
-        legend.title=element_text(size=16),
-        legend.key=element_blank())+
-  labs(color="Nest",linetype="Nest", shape = "Nest")+
-  xlab(NULL)+
-  ylab(NULL)+
-  scale_color_manual(breaks = c("Tube", "Circle"), 
-                     name="Nest",
-                     values=c("red", "blue"),
-                     labels=c("Tube","Circle"))+
-  guides(shape = guide_legend(override.aes = list(alpha = 0.75)))+
-  ylim(0,0.1)
 
 CircleAggn.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Aggn" & Nest == "Circle")%>%drop_na(),
                            aes(x=PropWorkers,y=AvgSpeed)) +
@@ -424,18 +410,16 @@ CircleAggn.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Aggn" & Nest =
   geom_point(key_glyph = large_points,size=2.5,alpha=0.15,color="blue", shape = 16) +
   geom_smooth(method='lm',se=FALSE,size=1.5,color="black")+
   theme_pubclean()+
-  theme(axis.line.x = element_line(color="black", size = 0.3), 
-        axis.ticks = element_blank(),
-        axis.text.y = element_text(size= 14,color="black",family="Arial"),
-        axis.text.x = element_text(size = 14, color = "black",family="Arial"),
+  theme(axis.ticks = element_blank(),
+        axis.text.y = element_text(size= 18,color="black",family="Arial"),
+        axis.text.x = element_text(size = 18, color = "black",family="Arial"),
         axis.title = element_blank(),
-        plot.title=element_text(size=18,family="Arial"),
+        plot.title=element_text(size=20,family="Arial", face = "bold"),
         legend.key=element_blank()) +
   xlab(NULL)+
   ylab(NULL)+
-  ylim(0,0.1)
-
-CircleAggn.Density
+  xlim(0, 1) +
+  ylim(0, 0.1)
 
 TubeAggn.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Aggn" & Nest == "Tube")%>%drop_na(),
                          aes(x=PropWorkers,y=AvgSpeed)) +
@@ -443,36 +427,33 @@ TubeAggn.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Aggn" & Nest == 
   geom_point(key_glyph = large_points,size=2.5,alpha=0.15,color="red", shape = 17) +
   geom_smooth(method='lm',se=FALSE,size=1.5,color="black",linetype="dashed")+
   theme_pubclean()+
-  theme(axis.line.x = element_line(color="black", size = 0.3), 
-        axis.ticks = element_blank(),
-        axis.text.y = element_text(size= 14,color="white",family="Arial"),
-        axis.text.x = element_text(size = 14, color = "black",family="Arial"),
+  theme(axis.ticks = element_blank(),
+        axis.text.y = element_text(size= 16,color="white",family="Arial"),
+        axis.text.x = element_text(size = 16, color = "black",family="Arial"),
         axis.title = element_blank(),
-        plot.title=element_text(size=18,family="Arial"),
+        plot.title=element_text(size=20,family="Arial", face = "bold"),
         legend.key=element_blank())+
   xlab(NULL)+
   ylab(NULL)+
-  guides(shape = guide_legend(override.aes = list(alpha = 0.75)))+
-  ylim(0,0.1)
-TubeAggn.Density
+  guides(shape = guide_legend(override.aes = list(alpha = 0.75))) +
+  xlim(0, 1) +
+  ylim(0, 0.1) 
+
 
 CirclePre.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Pre" & Nest == "Circle")%>%drop_na(),aes(x=PropWorkers,y=AvgSpeed)) +
   ggtitle("Circle Baseline")+
   geom_point(key_glyph = large_points,size=2.5,alpha=0.15,color="blue", shape = 16) +
   geom_smooth(method='lm',se=FALSE,size=1.5,color="black")+
   theme_pubclean()+
-  theme(axis.line.x = element_line(color="black", size = 0.3), 
-        axis.ticks = element_blank(),
-        axis.text.y = element_text(size= 14,color="black",family="Arial"),
-        axis.text.x = element_text(size = 14, color = "black",family="Arial"),
+  theme(axis.text.y = element_text(size= 18,color="black",family="Arial"),
+        axis.text.x = element_text(size = 18, color = "black",family="Arial"),
         axis.title = element_blank(),
-        plot.title=element_text(size=18,family="Arial"),
+        plot.title=element_text(size=20,family="Arial", face = "bold"),
         legend.key=element_blank()) +
   xlab(NULL)+
   ylab(NULL)+
-  ylim(0,0.1)
-
-CirclePre.Density
+  xlim(0, 1) +
+  ylim(0, 0.1) 
 
 TubePre.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Pre" & Nest == "Tube")%>%drop_na(),
                         aes(x=PropWorkers,y=AvgSpeed)) +
@@ -480,21 +461,20 @@ TubePre.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Pre" & Nest == "T
   geom_point(key_glyph = large_points,size=2.5,alpha=0.15,color="red", shape = 17) +
   geom_smooth(method='lm',se=FALSE,size=1.5,color="black",linetype="dashed")+
   theme_pubclean()+
-  theme(axis.line.x = element_line(color="black", size = 0.3), 
-        axis.ticks = element_blank(),
-        axis.text.y = element_text(size= 14,color="white",family="Arial"),
-        axis.text.x = element_text(size = 14, color = "black",family="Arial"),
+  theme(axis.ticks = element_blank(),
+        axis.text.y = element_text(size= 18,color="white",family="Arial"),
+        axis.text.x = element_text(size = 18, color = "black",family="Arial"),
         axis.title = element_blank(),
-        plot.title=element_text(size=18,color="black",family="Arial"),
+        plot.title=element_text(size=20,family="Arial", face = "bold"),
         legend.key=element_blank())+
   xlab(NULL)+
   ylab(NULL)+
   guides(shape = guide_legend(override.aes = list(alpha = 0.75)))+
-  ylim(0,0.1)
-TubePre.Density
+  xlim(0, 1) +
+  ylim(0, 0.1) 
 
-SpeedDensity<-ggarrange(CirclePre.Density, TubePre.Density,
-                     CircleAggn.Density, TubeAggn.Density,
+SpeedDensity<-ggarrange(CirclePre.Density, TubePre.Density, 
+                        CircleAggn.Density, TubeAggn.Density,
                      labels = c("A", "B","C","D"),
                      font.label = list(size = 24,
                                        family="Arial"),
@@ -519,12 +499,12 @@ Pre.Density<-ggplot(data=FullAssayDensity%>%filter(Trial=="Pre")%>%drop_na(),
   theme_pubclean()+
   theme(axis.line = element_line(color="black", size = 0.3), 
         axis.ticks = element_blank(),
-        axis.text.y = element_text(size= 11,color="white"),
-        axis.text.x = element_text(size = 11, color = "black"),
+        axis.text.y = element_text(size= 14,color="white"),
+        axis.text.x = element_text(size = 14, color = "black"),
         axis.title = element_blank(),
         legend.justification = c(1, 1),
-        legend.text=element_text(size = 14),
-        legend.title=element_text(size=16),
+        legend.text=element_text(size = 16),
+        legend.title=element_text(size=18),
         legend.key=element_blank())+
   labs(color="Nest",linetype="Nest", shape = "Nest")+
   xlab(NULL)+
